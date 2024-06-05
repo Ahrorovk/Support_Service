@@ -1,4 +1,4 @@
-package com.example.supportservice.auth.domain.auth.states
+package com.example.supportservice.auth.domain.registr.states
 
 import com.example.supportservice.auth.domain.registr.models.RegistrationResponseRemote
 

@@ -3,7 +3,7 @@ package com.example.supportservice.auth.presentation.registratrionScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.supportservice.auth.domain.auth.states.RegistrationResponseState
+import com.example.supportservice.auth.domain.registr.states.RegistrationResponseState
 import com.example.supportservice.auth.domain.registr.models.RegistrationReceiveRemote
 import com.example.supportservice.auth.domain.registr.models.RegistrationResponseRemote
 import com.example.supportservice.auth.domain.registr.use_cases.RegistrationUseCase

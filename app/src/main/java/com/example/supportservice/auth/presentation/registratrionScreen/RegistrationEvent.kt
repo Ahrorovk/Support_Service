@@ -1,6 +1,6 @@
 package com.example.supportservice.auth.presentation.registratrionScreen
 
-import com.example.supportservice.auth.domain.auth.states.RegistrationResponseState
+import com.example.supportservice.auth.domain.registr.states.RegistrationResponseState
 import com.example.supportservice.core.domain.states.RoleState
 
 sealed class RegistrationEvent {
