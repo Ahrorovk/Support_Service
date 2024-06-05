@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,11 +35,11 @@ fun RegistrationScreen(
     state: RegistrationState,
     onEvent: (RegistrationEvent) -> Unit
 ) {
-//    LaunchedEffect(key1 = state.registrationRespState.response) {
-//        if (state.registrationRespState.response != null) {
-//            onEvent(RegistrationEvent.GoToMainScreen)
-//        }
-//    }
+    LaunchedEffect(key1 = state.registrationRespState.response) {
+        if (state.registrationRespState.response != null) {
+            onEvent(RegistrationEvent.GoToMainScreen)
+        }
+    }
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -57,26 +58,24 @@ fun RegistrationScreen(
                     .height(100.dp)
                     .clip(RoundedCornerShape(size = 15.dp))
             )
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 22.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LazyRow {
-                    items(state.rolesState) {
-                        CustomButton(
-                            text = it.role,
-                            textSize = 16,
-                            isLoading = false,
-                            height = 55,
-                            shape = 5,
-                            selected = state.selectedRole.roleId == it.roleId,
-                            modifier = Modifier.width(170.dp)
-                        ) {
-                            onEvent(RegistrationEvent.OnRoleChange(it))
-                        }
+                items(state.rolesState) {
+                    CustomButton(
+                        text = it.role,
+                        textSize = 16,
+                        isLoading = false,
+                        height = 55,
+                        shape = 5,
+                        selected = state.selectedRole.roleId == it.roleId,
+                        modifier = Modifier.width(170.dp)
+                    ) {
+                        onEvent(RegistrationEvent.OnRoleChange(it))
                     }
                 }
             }
@@ -157,14 +156,13 @@ fun RegistrationScreen(
             CustomButton(
                 text = "Регистрироваться",
                 textSize = 16,
-                isLoading = false,//state.registrationRespState.isLoading,
+                isLoading = state.registrationRespState.isLoading,
                 enabled = getEnable(state),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 22.dp, end = 22.dp, top = 40.dp)
             ) {
                 onEvent(RegistrationEvent.Registration)
-                onEvent(RegistrationEvent.GoToSignUp)
             }
         }
         Box(

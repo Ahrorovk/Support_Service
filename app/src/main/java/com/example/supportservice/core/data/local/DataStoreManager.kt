@@ -23,8 +23,15 @@ class DataStoreManager(val context: Context) {
         private val ADVICES_TEST_ID = intPreferencesKey("advices_test_id")
         private val LOGIN_KEY = stringPreferencesKey("login_key")
         private val PASSWORD_KEY = stringPreferencesKey("password_key")
+        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
     }
 
+
+    suspend fun updateAccessToken(token: String) {
+        context.dataStore.edit { preference ->
+            preference[ACCESS_TOKEN_KEY] = token
+        }
+    }
 
     suspend fun updateLogin(login: String) {
         context.dataStore.edit { preferences ->
@@ -86,6 +93,10 @@ class DataStoreManager(val context: Context) {
         }
     }
 
+
+    val getAccessToken = context.dataStore.data.map {
+        it[ACCESS_TOKEN_KEY] ?: ""
+    }
 
     val getLogin = context.dataStore.data.map {
         it[LOGIN_KEY] ?: ""

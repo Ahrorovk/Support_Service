@@ -1,12 +1,20 @@
 package com.example.supportservice.auth.presentation.registratrionScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.supportservice.auth.domain.auth.states.RegistrationResponseState
+import com.example.supportservice.auth.domain.registr.models.RegistrationReceiveRemote
+import com.example.supportservice.auth.domain.registr.models.RegistrationResponseRemote
+import com.example.supportservice.auth.domain.registr.use_cases.RegistrationUseCase
 import com.example.supportservice.core.data.local.DataStoreManager
+import com.example.supportservice.core.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
-//    private val registrationUseCase: RegistrationUseCase,
+    private val registrationUseCase: RegistrationUseCase,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(RegistrationState())
@@ -58,6 +66,7 @@ class RegistrationViewModel @Inject constructor(
                     )
                 }
             }
+
             is RegistrationEvent.OnPhoneChange -> {
                 _state.update {
                     it.copy(
@@ -74,13 +83,13 @@ class RegistrationViewModel @Inject constructor(
                 registration()
             }
 
-//            is RegistrationEvent.OnRegistrationRespStateChange -> {
-//                _state.update {
-//                    it.copy(
-//                        registrationRespState = event.state
-//                    )
-//                }
-//            }
+            is RegistrationEvent.OnRegistrationRespStateChange -> {
+                _state.update {
+                    it.copy(
+                        registrationRespState = event.registrationResponseState
+                    )
+                }
+            }
 
             is RegistrationEvent.OnRoleChange -> {
                 _state.update {
@@ -95,31 +104,29 @@ class RegistrationViewModel @Inject constructor(
     }
 
     private fun registration() {
-        /*
+
         registrationUseCase.invoke(
-            RegistrationBody(
-                username = _state.value.username,
+            RegistrationReceiveRemote(
+                name = _state.value.username,
                 email = _state.value.email,
-                phone = _state.value.phone,
+                phone_number = _state.value.phone,
                 password = _state.value.password,
-                password_confirmation = _state.value.passwordConfirm,
-                role = _state.value.selectedRole.roleId
+                role = _state.value.selectedRole.role
             )
-        ).onEach { result: Resource<RegistrationResp> ->
+        ).onEach { result: Resource<RegistrationResponseRemote> ->
             when (result) {
                 is Resource.Success -> {
-                    val response: RegistrationResp? = result.data
+                    val response: RegistrationResponseRemote? = result.data
                     onEvent(
                         RegistrationEvent.OnRegistrationRespStateChange(
-                            RegistrationRespState(
+                            RegistrationResponseState(
                                 response = response
                             )
                         )
                     )
                     viewModelScope.launch {
                         if (response != null) {
-                            dataStoreManager.updateRefreshToken(response.refresh)
-                            dataStoreManager.updateAccessToken(response.access)
+                            dataStoreManager.updateAccessToken(response.token)
                         }
                     }
                     Log.e("TAG", "AuthorizationResponse->\n ${_state.value.registrationRespState}")
@@ -129,7 +136,7 @@ class RegistrationViewModel @Inject constructor(
                     Log.e("TAG", "AuthorizationResponseError->\n ${result.message}")
                     onEvent(
                         RegistrationEvent.OnRegistrationRespStateChange(
-                            RegistrationRespState(
+                            RegistrationResponseState(
                                 error = "${result.message}"
                             )
                         )
@@ -139,13 +146,13 @@ class RegistrationViewModel @Inject constructor(
                 is Resource.Loading -> {
                     onEvent(
                         RegistrationEvent.OnRegistrationRespStateChange(
-                            RegistrationRespState(
+                            RegistrationResponseState(
                                 isLoading = true
                             )
                         )
                     )
                 }
             }
-        }.launchIn(viewModelScope)*/
+        }.launchIn(viewModelScope)
     }
 }

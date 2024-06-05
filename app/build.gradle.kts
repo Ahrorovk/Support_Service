@@ -51,6 +51,12 @@ android {
     }
 }
 
+configurations {
+    create("cleanedAnnotations")
+    implementation {
+        exclude(group = "org.jetbrains", module = "annotations")
+    }
+}
 dependencies {
 //hilt
     implementation(libs.com.google.dagger.hilt.android)
@@ -63,12 +69,16 @@ dependencies {
     implementation(libs.coroutines.test)
     //Room
 
-//    implementation(libs.room.ktx)
-//    implementation(libs.room.compiler)
-//    implementation(libs.room.runtime)
-//    implementation(libs.retrofit.base)
-//    implementation(libs.retrofit.gsonConverter)
-//    implementation(libs.room.paging)
+    implementation(libs.room.ktx)
+    implementation(libs.room.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.paging)
+//    implementation("org.jetbrains:annotations:23.0.0")
+    //Retrofit
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit.base)
+    implementation(libs.retrofit.gsonConverter)
 
     implementation (libs.accompanist.permissions)
     implementation(libs.android.acompanist.navigation)
