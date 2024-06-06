@@ -25,7 +25,7 @@ fun MainScreen(
         if (state.selectedRoleId == 0) {
             onEvent(MainEvent.GetUser)
         }
-        if (state.selectedRoleId == 2) {
+        if (state.selectedRoleId == 1) {
             onEvent(MainEvent.GetApplicationsByEmail)
         }
     }
