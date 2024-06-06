@@ -77,8 +77,6 @@ class RegistrationViewModel @Inject constructor(
 
             RegistrationEvent.Registration -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    dataStoreManager.updateLogin(state.value.username)
-                    dataStoreManager.updatePassword(state.value.password)
                 }
                 registration()
             }
@@ -111,7 +109,7 @@ class RegistrationViewModel @Inject constructor(
                 email = _state.value.email,
                 phone_number = _state.value.phone,
                 password = _state.value.password,
-                role = _state.value.selectedRole.role
+                role_id = _state.value.selectedRole.roleId
             )
         ).onEach { result: Resource<RegistrationResponseRemote> ->
             when (result) {

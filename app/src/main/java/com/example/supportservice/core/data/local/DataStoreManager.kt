@@ -14,16 +14,10 @@ class DataStoreManager(val context: Context) {
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("preferences_name")
         private val FIRST_OPEN_KEY = booleanPreferencesKey("first_open_key")
-        private val AGE_ID = intPreferencesKey("age_id")
-        private val ECOLOGY_COMMON_SCORE = intPreferencesKey("ecology_common_score")
         val THE_FIRST_LOCALE_LANGUAGE_KEY = intPreferencesKey("THE_FIRST_LOCALE_LANGUAGE_KEY")
         val LANGUAGE_SHORTCUT_KEY = stringPreferencesKey("LANGUAGE_SHORTCUT_KEY")
-        private val ADVICES_COMMON_SCORE = intPreferencesKey("advices_common_score")
-        private val ECOLOGY_TEST_ID = intPreferencesKey("ecology_test_id")
-        private val ADVICES_TEST_ID = intPreferencesKey("advices_test_id")
-        private val LOGIN_KEY = stringPreferencesKey("login_key")
-        private val PASSWORD_KEY = stringPreferencesKey("password_key")
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
+        private val ROLE_ID = intPreferencesKey("role_id")
     }
 
 
@@ -33,21 +27,9 @@ class DataStoreManager(val context: Context) {
         }
     }
 
-    suspend fun updateLogin(login: String) {
-        context.dataStore.edit { preferences ->
-            preferences[LOGIN_KEY] = login
-        }
-    }
-
-    suspend fun updatePassword(password: String) {
-        context.dataStore.edit { preferences ->
-            preferences[PASSWORD_KEY] = password
-        }
-    }
-
-    suspend fun updateEcologyCommonScore(score: Int) {
-        context.dataStore.edit { prefences ->
-            prefences[ECOLOGY_COMMON_SCORE] = score
+    suspend fun updateRoleId(id: Int) {
+        context.dataStore.edit { preference ->
+            preference[ROLE_ID] = id
         }
     }
 
@@ -63,33 +45,9 @@ class DataStoreManager(val context: Context) {
         }
     }
 
-    suspend fun updateEcologyTestId(score: Int) {
-        context.dataStore.edit { prefences ->
-            prefences[ECOLOGY_TEST_ID] = score
-        }
-    }
-
-    suspend fun updateAdvicesCommonScore(score: Int) {
-        context.dataStore.edit { prefences ->
-            prefences[ADVICES_COMMON_SCORE] = score
-        }
-    }
-
-    suspend fun updateAdvicesTestId(score: Int) {
-        context.dataStore.edit { prefences ->
-            prefences[ADVICES_TEST_ID] = score
-        }
-    }
-
     suspend fun updateFirstOpenKey(key: Boolean) {
         context.dataStore.edit { mutablePreferences ->
             mutablePreferences[FIRST_OPEN_KEY] = key
-        }
-    }
-
-    suspend fun updateAgeId(id: Int) {
-        context.dataStore.edit { mutablePreferences ->
-            mutablePreferences[AGE_ID] = id
         }
     }
 
@@ -97,13 +55,8 @@ class DataStoreManager(val context: Context) {
     val getAccessToken = context.dataStore.data.map {
         it[ACCESS_TOKEN_KEY] ?: ""
     }
-
-    val getLogin = context.dataStore.data.map {
-        it[LOGIN_KEY] ?: ""
-    }
-
-    val getPassword = context.dataStore.data.map {
-        it[PASSWORD_KEY] ?: ""
+    val getRoleId = context.dataStore.data.map {
+        it[ROLE_ID] ?: 0
     }
 
     val getLanguageState = context.dataStore.data.map {
@@ -112,22 +65,6 @@ class DataStoreManager(val context: Context) {
 
     val getLanguageId = context.dataStore.data.map {
         it[LANGUAGE_SHORTCUT_KEY] ?: "tg"
-    }
-
-    val getAgeId = context.dataStore.data.map {
-        it[AGE_ID] ?: 0
-    }
-    val getEcologyCommonScore = context.dataStore.data.map {
-        it[ECOLOGY_COMMON_SCORE] ?: 0
-    }
-    val getEcologyTestId = context.dataStore.data.map {
-        it[ECOLOGY_TEST_ID] ?: 0
-    }
-    val getAdvicesCommonScore = context.dataStore.data.map {
-        it[ADVICES_COMMON_SCORE] ?: 0
-    }
-    val getAdvicesTestId = context.dataStore.data.map {
-        it[ADVICES_TEST_ID] ?: 0
     }
 
     val getFirstOpenKey = context.dataStore.data.map {

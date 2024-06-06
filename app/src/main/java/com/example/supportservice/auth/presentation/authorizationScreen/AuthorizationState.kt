@@ -1,9 +1,9 @@
 package com.example.supportservice.auth.presentation.authorizationScreen
 
+import com.example.supportservice.auth.domain.auth.states.LoginResponseState
+
 data class AuthorizationState(
     val username: String = "",
     val password: String = "",
-    val savedUsername: String = "",
-    val savedPassword:String = ""
-//    val authorizationRespState: AuthorizationRespState = AuthorizationRespState()
+    val authorizationRespState: LoginResponseState = LoginResponseState()
 )

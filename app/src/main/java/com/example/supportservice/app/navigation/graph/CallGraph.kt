@@ -94,10 +94,6 @@ fun NavGraphBuilder.CallNavGraph(
             val viewModel = hiltViewModel<MainViewModel>()
             val state = viewModel.state.collectAsState()
             viewModel.onEvent(MainEvent.OnSearchProjectChange(""))
-            LaunchedEffect(key1 = true) {
-                viewModel.onEvent(MainEvent.GetVacancies)
-//                    viewModel.onEvent(MainEvent.GetCompanies)
-            }
             MainScreen(
                 state = state.value,
                 scaffoldState = scaffoldState,

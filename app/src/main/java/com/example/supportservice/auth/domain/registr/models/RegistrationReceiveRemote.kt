@@ -5,5 +5,5 @@ data class RegistrationReceiveRemote(
     val email: String,
     val name: String,
     val phone_number: String,
-    val role: String
+    val role_id: Int
 )

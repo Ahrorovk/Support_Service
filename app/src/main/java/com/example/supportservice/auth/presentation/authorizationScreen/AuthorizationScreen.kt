@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +30,11 @@ fun AuthorizationScreen(
     state: AuthorizationState,
     onEvent: (AuthorizationEvent) -> Unit
 ) {
-//    LaunchedEffect(key1 = state.authorizationRespState.response) {
-//        if (state.authorizationRespState.response != null) {
-//            onEvent(AuthorizationEvent.GoToMainScreen)
-//        }
-//    }
+    LaunchedEffect(key1 = state.authorizationRespState.response) {
+        if (state.authorizationRespState.response != null) {
+            onEvent(AuthorizationEvent.GoToMainScreen)
+        }
+    }
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -84,16 +85,11 @@ fun AuthorizationScreen(
             CustomButton(
                 text = "Войти",
                 textSize = 16,
-                isLoading = false, //state.authorizationRespState.isLoading,
+                isLoading = state.authorizationRespState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 22.dp)
             ) {
-                if (state.savedUsername.isNotEmpty() && state.savedPassword.isNotEmpty()) {
-                    if (state.username == state.savedUsername && state.password == state.savedPassword) {
-                        onEvent(AuthorizationEvent.GoToMainScreen)
-                    }
-                }
                 onEvent(AuthorizationEvent.Authorization)
             }
         }

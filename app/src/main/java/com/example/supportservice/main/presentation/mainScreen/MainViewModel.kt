@@ -1,26 +1,35 @@
 package com.ahrorovkspace.afkorhackathon.presentation.mainScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supportservice.core.data.local.DataStoreManager
+import com.example.supportservice.core.util.Resource
+import com.example.supportservice.main.domain.main.models.ApplicationsResponseRemote
+import com.example.supportservice.main.domain.main.states.GetApplicationsResponseState
+import com.example.supportservice.main.domain.main.use_cases.GetApplicationsByEmailUseCase
 import com.example.supportservice.main.presentation.mainScreen.MainEvent
 import com.example.supportservice.main.presentation.mainScreen.MainState
+import com.example.supportservice.user.domain.models.UserResponseRemote
+import com.example.supportservice.user.domain.states.UserResponseState
+import com.example.supportservice.user.domain.use_cases.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager,
-    /*
-        private val getVacanciesUseCase: GetVacanciesUseCase,
-        private val refreshTokenUseCase: RefreshTokenUseCase,
-        private val getCompanyByIdUseCase: GetCompanyByIdUseCase*/
+    private val getApplicationsByEmailUseCase: GetApplicationsByEmailUseCase,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.stateIn(
@@ -29,21 +38,22 @@ class MainViewModel @Inject constructor(
         MainState()
     )
 
-    init {/*
-        dataStoreManager.getRefreshToken.onEach { value ->
-            _state.update {
-                it.copy(
-                    refreshToken = value
-                )
-            }
-        }.launchIn(viewModelScope)
+    init {
         dataStoreManager.getAccessToken.onEach { value ->
             _state.update {
                 it.copy(
                     accessToken = value
                 )
             }
-        }.launchIn(viewModelScope)*/
+        }.launchIn(viewModelScope)
+
+        dataStoreManager.getRoleId.onEach { value ->
+            _state.update {
+                it.copy(
+                    selectedRoleId = value
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun onEvent(event: MainEvent) {
@@ -56,31 +66,22 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            is MainEvent.GetVacancies -> {
-                getVacancies()
+
+            is MainEvent.GetApplicationsByEmail -> {
+                getApplicationsByEmail()
             }
 
-            is MainEvent.GetCompanies -> {
-                getCompanyById()
+            MainEvent.GetUser -> {
+                getUser()
             }
 
-            /*is MainEvent.OnGetCompaniesRespStateChange -> {
+            is MainEvent.OnGetApplicationsResponseStateChange -> {
                 _state.update {
                     it.copy(
-                        companiesRespState = event.state
+                        applicationsRespState = event.state
                     )
                 }
             }
-
-            is MainEvent.OnGetVacanciesRespStateChange -> {
-                event.state.response?.let { resp ->
-                    _state.update {
-                        it.copy(
-                            vacanciesRespState = event.state,
-                        )
-                    }
-                }
-            }*/
 
             MainEvent.Clean -> {
                 /*viewModelScope.launch {
@@ -93,136 +94,84 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getCompanyById() {
-        /*
-        if (_state.value.accessToken.isNotEmpty())
-            getCompanyByIdUseCase.invoke(
-                token = "Bearer ${_state.value.accessToken}"
-            ).onEach { result: Resource<GetCompaniesResp> ->
-                when (result) {
-                    is Resource.Success -> {
-                        val response: GetCompaniesResp? = result.data
-                        onEvent(
-                            MainEvent.OnGetCompaniesRespStateChange(
-                                GetCompaniesRespState(
-                                    response = response
-                                )
-                            )
-                        )
-                        Log.e(
-                            "TAG",
-                            "GetCompaniesResponse->\n ${_state.value.companiesRespState}"
-                        )
-                    }
 
+    private fun getUser() {
+        Log.e("TOKEN", "token--->${_state.value.accessToken}")
+        getUserUseCase.invoke(_state.value.accessToken)
+            .onEach { result: Resource<UserResponseRemote> ->
+                when (result) {
                     is Resource.Error -> {
-                        Log.e("TAG", "GetCompaniesResponseError->\n ${result.message}")
-                        onEvent(
-                            MainEvent.OnGetCompaniesRespStateChange(
-                                GetCompaniesRespState(
-                                    error = "${result.message}"
+                        result.message?.let { mes ->
+                            _state.update {
+                                it.copy(
+                                    userResponseState = UserResponseState(error = mes)
                                 )
-                            )
-                        )
-                        if (result.message != "Not Found")
-                            refreshToken {
-                                getCompanyById()
                             }
+                        }
                     }
 
                     is Resource.Loading -> {
-                        onEvent(
-                            MainEvent.OnGetVacanciesRespStateChange(
-                                GetVacancyRespState(
-                                    isLoading = true
-                                )
+                        _state.update {
+                            it.copy(
+                                userResponseState = UserResponseState(isLoading = true)
                             )
-                        )
+                        }
                     }
 
+                    is Resource.Success -> {
+                        val response = result.data
+                        viewModelScope.launch {
+                            dataStoreManager.updateRoleId(response?.role_id ?: 0)
+                        }
+                    }
                 }
-            }.launchIn(viewModelScope)*/
+            }.launchIn(viewModelScope)
     }
 
-    private fun getVacancies() {
-        /*
-        if (_state.value.accessToken.isNotEmpty())
-            getVacanciesUseCase.invoke("Bearer ${_state.value.accessToken}")
-                .onEach { result: Resource<GetVacancyResp> ->
-                    when (result) {
-                        is Resource.Success -> {
-                            val response: GetVacancyResp? = result.data
-                            onEvent(
-                                MainEvent.OnGetVacanciesRespStateChange(
-                                    GetVacancyRespState(
-                                        response = response
-                                    )
-                                )
-                            )
-                            Log.e(
-                                "TAG",
-                                "AuthorizationResponse->\n ${_state.value.vacanciesRespState.response?.results}"
-                            )
-                        }
-
-                        is Resource.Error -> {
-                            Log.e("TAG", "AuthorizationResponseError->\n ${result.message}")
-                            onEvent(
-                                MainEvent.OnGetVacanciesRespStateChange(
-                                    GetVacancyRespState(
-                                        error = "${result.message}"
-                                    )
-                                )
-                            )
-                            if (result.message != "Not Found")
-                                refreshToken {
-                                    getVacancies()
-                                }
-                        }
-
-                        is Resource.Loading -> {
-                            onEvent(
-                                MainEvent.OnGetVacanciesRespStateChange(
-                                    GetVacancyRespState(
-                                        isLoading = true
-                                    )
-                                )
-                            )
-                        }
-
-                    }
-                }.launchIn(viewModelScope)*/
-    }
-
-    private fun refreshToken(refreshFun: () -> Unit) {/*
-        refreshTokenUseCase.invoke(
-            refreshTokenBody = RefreshTokenBody(_state.value.refreshToken)
-        ).onEach { result: Resource<RefreshTokenResp> ->
+    private fun getApplicationsByEmail() {
+        Log.e("TOKEN", "token->${_state.value.accessToken}")
+        getApplicationsByEmailUseCase.invoke(
+            token = _state.value.accessToken
+        ).onEach { result: Resource<ApplicationsResponseRemote> ->
             when (result) {
                 is Resource.Success -> {
-                    val response: RefreshTokenResp? = result.data
-                    response?.let {
-                        dataStoreManager.updateAccessToken(it.access)
-                        delay(100)
-                        refreshFun()
-                    }
-                    Log.e("TAG", "RefreshTokenResponse->\n ${_state.value.accessToken}")
+                    val response: ApplicationsResponseRemote? = result.data
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                response = response
+                            )
+                        )
+                    )
+                    Log.e(
+                        "TAG",
+                        "GetApplicationsResponse->\n ${_state.value.applicationsRespState.response}"
+                    )
                 }
 
                 is Resource.Error -> {
-                    Log.e("TAG", "RefreshTokenResponseError->\n ${result.message}")
+                    Log.e("TAG", "GetApplicationsResponseError->\n ${result.message}")
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                error = "${result.message}"
+                            )
+                        )
+                    )
                 }
 
                 is Resource.Loading -> {
                     onEvent(
-                        MainEvent.OnGetVacanciesRespStateChange(
-                            GetVacancyRespState(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
                                 isLoading = true
                             )
                         )
                     )
                 }
+
             }
-        }.launchIn(viewModelScope)*/
+        }.launchIn(viewModelScope)
     }
+
 }

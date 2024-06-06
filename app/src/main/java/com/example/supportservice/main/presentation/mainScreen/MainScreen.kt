@@ -7,6 +7,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,54 +21,32 @@ fun MainScreen(
     onEvent: (MainEvent) -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    LaunchedEffect(state.selectedRoleId) {
+        if (state.selectedRoleId == 0) {
+            onEvent(MainEvent.GetUser)
+        }
+        if (state.selectedRoleId == 2) {
+            onEvent(MainEvent.GetApplicationsByEmail)
+        }
+    }
     Scaffold(
         scaffoldState = scaffoldState,
-        drawerContent = {
-            /*DrawerContent(
-                openLoginScreen = {
-                    scope.launch {
-                        scaffoldState.drawerState.close()
-                    }
-                    onEvent(MainEvent.GoToAuthorization)
-                },
-                openRegistrationScreen = {
-                    scope.launch {
-                        scaffoldState.drawerState.close()
-                    }
-                    onEvent(MainEvent.GoToRegistration)
-                },
-                openSettingsScreen = {
-                    scope.launch {
-                        scaffoldState.drawerState.close()
-                    }
-                    onEvent(MainEvent.GoToSettings)
-                },
-                openDonationsLink = { /*TODO*/ },
-                openGithubPage = { /*TODO*/ },
-                shareApp = { /*TODO*/ },
-                sendEmail = { /*TODO*/ },
-                isReg = state.refreshToken.isNotEmpty(),
-                logOut = {
-                    onEvent(MainEvent.Clean)
-                    onEvent(MainEvent.Logout)
-                }
-            )*/
-        },
         backgroundColor = Color.Transparent
     ) { itt ->
         LazyColumn(Modifier.padding(itt)) {
             item {
                 Text(text = "MainScreen")
-//                state.vacanciesRespState.response?.let { item ->
-//                    item.results.forEachIndexed { ind, vacancy ->
-//                        Log.e("TAG","${vacancy.phone_number}")
-                /*CustomProjectItem(
-                    vacancy = vacancy
-                ) {
-                    onEvent(MainEvent.GoToApplication(it))
-                }*/
-                Spacer(modifier = Modifier.padding(10.dp))
-//                    }
+
+                state.applicationsRespState.response?.let { res ->
+                    res.applications.forEach { app ->
+                        Text(text = app.title)
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(text = app.description)
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(text = app.status)
+                    }
+                }
+
                 Spacer(modifier = Modifier.padding(50.dp))
             }
         }
