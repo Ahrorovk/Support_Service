@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -32,13 +33,8 @@ fun RowScope.BottomNavItem(
                     it.route == Routes.MainScreen.route
                 }
 
-                Routes.SettingsScreen.route -> {
-                    it.route == Routes.SettingsScreen.route
-                }
-
-
-                Routes.TestScreen.route -> {
-                    it.route == Routes.TestScreen.route
+                Routes.UserScreen.route -> {
+                    it.route == Routes.UserScreen.route
                 }
 
                 else -> {

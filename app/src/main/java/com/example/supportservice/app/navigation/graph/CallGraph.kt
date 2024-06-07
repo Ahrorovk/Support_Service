@@ -1,7 +1,6 @@
 package com.example.supportservice.app.navigation.graph
 
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -9,8 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.supportservice.main.presentation.mainScreen.MainEvent
-import com.example.supportservice.main.presentation.mainScreen.MainScreen
 import com.ahrorovkspace.afkorhackathon.presentation.mainScreen.MainViewModel
 import com.example.supportservice.auth.presentation.authorizationScreen.AuthorizationEvent
 import com.example.supportservice.auth.presentation.authorizationScreen.AuthorizationScreen
@@ -20,6 +17,13 @@ import com.example.supportservice.auth.presentation.registratrionScreen.Registra
 import com.example.supportservice.auth.presentation.registratrionScreen.RegistrationViewModel
 import com.example.supportservice.core.util.Graph
 import com.example.supportservice.core.util.Routes
+import com.example.supportservice.main.presentation.mainScreen.MainEvent
+import com.example.supportservice.main.presentation.mainScreen.MainScreen
+import com.example.supportservice.start.presentation.startScreen.StartEvent
+import com.example.supportservice.start.presentation.startScreen.StartScreen
+import com.example.supportservice.start.presentation.startScreen.StartViewModel
+import com.example.supportservice.user.presentation.userScreen.UserScreen
+import com.example.supportservice.user.presentation.userScreen.UserViewModel
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 @ExperimentalMaterialNavigationApi
@@ -30,8 +34,36 @@ fun NavGraphBuilder.CallNavGraph(
 ) {
     navigation(
         route = Graph.MainGraph.route,
-        startDestination = Routes.AuthorizationScreen.route
+        startDestination = Routes.StartScreen.route
     ) {
+        composable(Routes.StartScreen.route) {
+            val viewModel = hiltViewModel<StartViewModel>()
+            val state = viewModel.state.collectAsState()
+            StartScreen(state = state.value) { event ->
+                when (event) {
+                    StartEvent.GoToMainScreen -> {
+                        navController.navigate(Routes.MainScreen.route) {
+                            popUpTo(Routes.StartScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+
+                    StartEvent.GoToAuthorizationScreen -> {
+                        navController.navigate(Routes.AuthorizationScreen.route) {
+                            popUpTo(Routes.StartScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+
+                    else -> {
+                        viewModel.onEvent(event)
+                    }
+                }
+            }
+        }
+
         composable(Routes.AuthorizationScreen.route) {
             val viewModel = hiltViewModel<AuthorizationViewModel>()
             val state = viewModel.state.collectAsState()
@@ -138,6 +170,16 @@ fun NavGraphBuilder.CallNavGraph(
                     }
                 }
             )
+        }
+
+        composable(Routes.UserScreen.route) {
+            val viewModel = hiltViewModel<UserViewModel>()
+            val state = viewModel.state.collectAsState()
+            UserScreen(state.value) { event ->
+                when (event) {
+                    else -> viewModel.onEvent(event)
+                }
+            }
         }
     }
 }

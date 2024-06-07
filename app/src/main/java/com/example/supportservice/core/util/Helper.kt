@@ -2,10 +2,13 @@ package com.example.supportservice.core.util
 
 import com.example.supportservice.auth.presentation.registratrionScreen.RegistrationState
 import com.example.supportservice.core.domain.states.RoleState
+import com.example.supportservice.main.domain.main.models.application.Application
+import com.example.supportservice.main.domain.main.models.status.Status
 
 fun doesScreenHaveBottomBar(currentScreen: String) =
     currentScreen != Routes.RegistrationScreen.route &&
-            currentScreen != Routes.AuthorizationScreen.route
+            currentScreen != Routes.AuthorizationScreen.route &&
+            currentScreen != Routes.StartScreen.route
 
 
 fun Int.ageToId(): Int {
@@ -17,16 +20,26 @@ fun Int.ageToId(): Int {
         else -> 0
     }
 }
-
+fun sortOrdersByStatus(orders: List<Application>, selectedStatus: String): List<Application> {
+    return if (selectedStatus != "Все") {
+        orders.sortedBy { order ->
+            order.status == selectedStatus
+        }
+    } else {
+        orders
+    }
+}
 fun doesScreenHavePopBack(currentScreen: String): Boolean {
     return currentScreen != Routes.MainScreen.route &&
             currentScreen != Routes.SettingsScreen.route &&
-            currentScreen != Routes.TestScreen.route
+            currentScreen != Routes.UserScreen.route &&
+            currentScreen != Routes.StartScreen.route
 }
 
 fun doesScreenHaveTopBar(currentScreen: String): Boolean {
     return currentScreen != Routes.RegistrationScreen.route &&
-            currentScreen != Routes.AuthorizationScreen.route
+            currentScreen != Routes.AuthorizationScreen.route &&
+            currentScreen != Routes.StartScreen.route
 }
 
 fun getScoreTitle(currentScreen: String): Boolean {

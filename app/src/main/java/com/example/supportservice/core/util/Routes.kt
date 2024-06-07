@@ -6,6 +6,7 @@ sealed class Routes(val route: String) {
     object AuthorizationScreen : Routes("AuthorizationScreen")
     object MyApplicationScreen : Routes("MyApplicationScreen")
     object MainScreen : Routes("MainScreen")
+    object UserScreen : Routes("UserScreen")
     object TestScreen : Routes("TestScreen")
     object DetailScreen : Routes("DetailScreen/{${Constants.DETAIL_ID_ARG}}")
     object DetailTestScreen :

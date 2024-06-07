@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.supportservice.app.navigation.components.StandTogetherBottomBar
+import com.example.supportservice.app.navigation.components.SupportServiceBottomBar
 import com.example.supportservice.app.navigation.graph.CallNavGraph
 import com.example.supportservice.core.presentation.components.CustomIconButton
 import com.example.supportservice.core.util.Graph
@@ -46,7 +46,7 @@ fun Navigation() {
         Scaffold(
             bottomBar = {
                 if (doesScreenHaveBottomBar(currentScreen)) {
-                    StandTogetherBottomBar(navController)
+                    SupportServiceBottomBar(navController)
                 }
             },
             topBar = {

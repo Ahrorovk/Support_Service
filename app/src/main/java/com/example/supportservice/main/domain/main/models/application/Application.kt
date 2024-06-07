@@ -1,4 +1,4 @@
-package com.example.supportservice.main.domain.main.models
+package com.example.supportservice.main.domain.main.models.application
 
 data class Application(
     val comment: String,

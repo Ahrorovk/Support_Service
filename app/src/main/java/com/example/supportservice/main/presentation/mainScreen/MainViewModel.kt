@@ -5,9 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supportservice.core.data.local.DataStoreManager
 import com.example.supportservice.core.util.Resource
-import com.example.supportservice.main.domain.main.models.ApplicationsResponseRemote
-import com.example.supportservice.main.domain.main.states.GetApplicationsResponseState
-import com.example.supportservice.main.domain.main.use_cases.GetApplicationsByEmailUseCase
+import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
+import com.example.supportservice.main.domain.main.models.status.StatusResponseRemote
+import com.example.supportservice.main.domain.main.states.application.GetApplicationsResponseState
+import com.example.supportservice.main.domain.main.states.status.GetAllStatusesResponseState
+import com.example.supportservice.main.domain.main.use_cases.application.GetAllApplicationsUseCase
+import com.example.supportservice.main.domain.main.use_cases.application.GetApplicationsByEmailUseCase
+import com.example.supportservice.main.domain.main.use_cases.status.GetAllStatusesUseCase
 import com.example.supportservice.main.presentation.mainScreen.MainEvent
 import com.example.supportservice.main.presentation.mainScreen.MainState
 import com.example.supportservice.user.domain.models.UserResponseRemote
@@ -29,7 +33,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val getApplicationsByEmailUseCase: GetApplicationsByEmailUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getAllApplications: GetAllApplicationsUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val getAllStatusesUseCase: GetAllStatusesUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.stateIn(
@@ -66,6 +72,13 @@ class MainViewModel @Inject constructor(
                 }
             }
 
+            is MainEvent.OnSelectedStatusChange -> {
+                _state.update {
+                    it.copy(
+                        selectedStatus = event.status
+                    )
+                }
+            }
 
             is MainEvent.GetApplicationsByEmail -> {
                 getApplicationsByEmail()
@@ -81,6 +94,14 @@ class MainViewModel @Inject constructor(
                         applicationsRespState = event.state
                     )
                 }
+            }
+
+            MainEvent.GetAllStatuses -> {
+                getAllStatuses()
+            }
+
+            MainEvent.GetAllApplications -> {
+                getAllApplications()
             }
 
             MainEvent.Clean -> {
@@ -174,4 +195,79 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun getAllApplications() {
+        getAllApplications.invoke(
+            token = _state.value.accessToken
+        ).onEach { result: Resource<ApplicationsResponseRemote> ->
+            when (result) {
+                is Resource.Success -> {
+                    val response: ApplicationsResponseRemote? = result.data
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                response = response
+                            )
+                        )
+                    )
+                    Log.e(
+                        "TAG",
+                        "GetApplicationsResponse->\n ${_state.value.applicationsRespState.response}"
+                    )
+                }
+
+                is Resource.Error -> {
+                    Log.e("TAG", "GetApplicationsResponseError->\n ${result.message}")
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                error = "${result.message}"
+                            )
+                        )
+                    )
+                }
+
+                is Resource.Loading -> {
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                isLoading = true
+                            )
+                        )
+                    )
+                }
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getAllStatuses() {
+        getAllStatusesUseCase.invoke().onEach { result: Resource<StatusResponseRemote> ->
+            when (result) {
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            allStatusesResponseState = GetAllStatusesResponseState(error = result.message.toString())
+                        )
+                    }
+                }
+
+                is Resource.Loading -> {
+                    _state.update {
+                        it.copy(
+                            allStatusesResponseState = GetAllStatusesResponseState(true)
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val response = result.data
+                    response?.let { res ->
+                        _state.update {
+                            it.copy(allStatusesResponseState = GetAllStatusesResponseState(response = res))
+                        }
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 }
