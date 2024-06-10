@@ -93,9 +93,7 @@ class DetailViewModel @Inject constructor(
             DetailEvent.UpdateApplication -> {
                 updateApplication()
             }
-            else -> {
-
-            }
+            else -> {}
         }
     }
 
