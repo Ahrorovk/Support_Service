@@ -9,9 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.supportservice.app.navigation.Navigation
+import com.example.supportservice.app.navigation.NavigationViewModel
 import com.example.supportservice.core.presentation.ui.theme.SupportServiceTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +32,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    val viewModel = hiltViewModel<NavigationViewModel>()
+                    val state = viewModel.state.collectAsState()
+                    Navigation(state.value) { event ->
+                        viewModel.onEvent(event)
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.supportservice.main.presentation.mainScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,22 +9,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.supportservice.core.presentation.components.ProgressIndicator
 import com.example.supportservice.main.domain.main.models.application.Application
 import com.example.supportservice.main.domain.main.models.status.Status
 import com.example.supportservice.main.presentation.components.ApplicationItem
+import com.example.supportservice.main.presentation.components.CustomProgressIndicator
 import com.example.supportservice.main.presentation.components.StatusItem
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
@@ -31,25 +36,34 @@ fun MainScreen(
     scaffoldState: ScaffoldState,
     onEvent: (MainEvent) -> Unit
 ) {
-    val sorted = remember {
-        mutableListOf<Application>()
+
+    LaunchedEffect(state.isAdded) {
+        if (state.isAdded) {
+            Log.e("ISADDED", "IS_ADDED->${state.selectedRoleId}")
+            if (state.selectedRoleId == 1) {
+                onEvent(MainEvent.GetApplicationsByEmail)
+            }
+            if (state.selectedRoleId == 2) {
+                onEvent(MainEvent.GetAllApplications)
+            }
+        }
     }
     LaunchedEffect(true) {
         onEvent(MainEvent.GetAllStatuses)
-        onEvent(MainEvent.OnSelectedStatusChange("Все"))
     }
+    CustomProgressIndicator(isLoading = state.applicationsRespState.isLoading)
     LaunchedEffect(state.selectedStatus) {
-        delay(500)
-        sorted.clear()
+        val sortedApplications = mutableListOf<Application>()
         state.applicationsRespState.response?.let { res ->
             if (state.selectedStatus != "Все")
                 res.applications.forEach {
                     if (state.selectedStatus == it.status) {
-                        sorted.add(it)
+                        sortedApplications.add(it)
                     }
                 } else {
-                sorted.addAll(res.applications)
+                sortedApplications.addAll(res.applications)
             }
+            onEvent(MainEvent.OnSortedApplicationsChange(sortedApplications))
         }
     }
     val scope = rememberCoroutineScope()
@@ -66,7 +80,16 @@ fun MainScreen(
     }
     Scaffold(
         scaffoldState = scaffoldState,
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
+        floatingActionButton = {
+            if (state.selectedRoleId == 1)
+                FloatingActionButton(onClick = {
+                    onEvent(MainEvent.GoToApplication)
+                    onEvent(MainEvent.OnIsAddedChange(false))
+                }) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "AddApplication")
+                }
+        }
     ) { itt ->
         LazyColumn(Modifier.padding(itt)) {
             item {
@@ -103,9 +126,16 @@ fun MainScreen(
                         }
                     }
 
-                    sorted.forEach { app ->
-                        ApplicationItem(application = app){
-
+                    state.sortedApplications.forEach { app ->
+                        ApplicationItem(application = app) {
+                            scope.launch {
+                                onEvent(MainEvent.OnCommentChange(it.comment))
+                                delay(150)
+                                Log.e("TAG", "IDIDID->$it")
+                                onEvent(MainEvent.UpdateStatus(it.id))
+                                delay(300)
+                                onEvent(MainEvent.GoToDetailApplication)
+                            }
                         }
                     }
                 }
@@ -114,7 +144,6 @@ fun MainScreen(
             }
         }
     }
-    ProgressIndicator(isProgress = false/*state.vacanciesRespState.isLoading*/)
 }
 
 

@@ -16,6 +16,9 @@ sealed class Routes(val route: String) {
     object StartScreen : Routes("StartScreen")
 }
 
-sealed class BottomSheet(val route: String) {
-    object CallBottomSheet : BottomSheet("CallBottomSheet")
+sealed class BottomSheets(val route: String){
+    object ApplicationSheet: Routes("ApplicationSheet/{${Constants.EMAIL_ARG}}/{${Constants.PHONE_NUMBER_ARG}}")
+}
+sealed class BottomSheetApplyOneTimeEvent {
+    object CloseBottomSheet : BottomSheetApplyOneTimeEvent()
 }

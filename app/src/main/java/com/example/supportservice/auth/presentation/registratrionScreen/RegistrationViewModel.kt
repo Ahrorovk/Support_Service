@@ -125,6 +125,7 @@ class RegistrationViewModel @Inject constructor(
                     viewModelScope.launch {
                         if (response != null) {
                             dataStoreManager.updateAccessToken(response.token)
+                            dataStoreManager.updateRoleId(_state.value.selectedRole.roleId)
                         }
                     }
                     Log.e("TAG", "AuthorizationResponse->\n ${_state.value.registrationRespState}")

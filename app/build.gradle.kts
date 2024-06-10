@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.android.acompanist.navigation)
     implementation (libs.accompanist.navigation.material)
 
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.chargemap.compose)
     implementation(libs.androidx.dataStore.preferences)
     implementation(libs.androidx.navigation.compose)

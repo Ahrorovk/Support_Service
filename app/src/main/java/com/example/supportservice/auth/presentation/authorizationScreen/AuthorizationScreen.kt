@@ -55,11 +55,11 @@ fun AuthorizationScreen(
             )
 
             CustomTextField(
-                value = state.username,
-                hint = "Login",
+                value = state.email,
+                hint = "Email",
                 onValueChange = {
                     onEvent(
-                        AuthorizationEvent.OnLoginChange(
+                        AuthorizationEvent.OnEmailChange(
                             it
                         )
                     )

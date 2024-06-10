@@ -4,7 +4,7 @@ import com.example.supportservice.auth.domain.auth.states.LoginResponseState
 
 
 sealed class AuthorizationEvent {
-    data class OnLoginChange(val login: String) : AuthorizationEvent()
+    data class OnEmailChange(val login: String) : AuthorizationEvent()
     data class OnPasswordChange(val password: String) : AuthorizationEvent()
     data class OnAuthorizationStateChange(val loginResponseState: LoginResponseState): AuthorizationEvent()
     object Authorization : AuthorizationEvent()

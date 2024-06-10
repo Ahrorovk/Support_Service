@@ -24,12 +24,12 @@ import com.example.supportservice.main.domain.main.models.application.Applicatio
 @Composable
 fun ApplicationItem(
     application: Application,
-    onClick: (Int) -> Unit
+    onClick: (Application) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(application.id) }
+            .clickable { onClick(application) }
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.primary)

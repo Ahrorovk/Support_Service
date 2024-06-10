@@ -36,17 +36,15 @@ class AuthorizationViewModel @Inject constructor(
 
     fun onEvent(event: AuthorizationEvent) {
         when (event) {
-            is AuthorizationEvent.OnLoginChange -> {
+            is AuthorizationEvent.OnEmailChange -> {
                 _state.update {
                     it.copy(
-                        username = event.login
+                        email = event.login
                     )
                 }
             }
 
             is AuthorizationEvent.OnPasswordChange -> {
-
-
                 _state.update {
                     it.copy(
                         password = event.password
@@ -64,7 +62,7 @@ class AuthorizationViewModel @Inject constructor(
 
             AuthorizationEvent.Authorization -> {
                 authorization(
-                    _state.value.username,
+                    _state.value.email,
                     _state.value.password
                 )
             }
@@ -73,10 +71,10 @@ class AuthorizationViewModel @Inject constructor(
         }
     }
 
-    fun authorization(username: String, password: String) {
+    fun authorization(email: String, password: String) {
         authorizationUseCase.invoke(
             LoginReceiveRemote(
-                username,
+                email,
                 password
             )
         ).onEach { result: Resource<LoginResponseRemote> ->

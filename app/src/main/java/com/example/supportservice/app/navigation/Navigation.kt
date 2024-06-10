@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import com.example.supportservice.app.navigation.components.SupportServiceBottom
 import com.example.supportservice.app.navigation.graph.CallNavGraph
 import com.example.supportservice.core.presentation.components.CustomIconButton
 import com.example.supportservice.core.util.Graph
+import com.example.supportservice.core.util.Routes
 import com.example.supportservice.core.util.doesScreenHaveBottomBar
 import com.example.supportservice.core.util.doesScreenHavePopBack
 import com.example.supportservice.core.util.doesScreenHaveTopBar
@@ -34,7 +36,10 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 @ExperimentalMaterialNavigationApi
 @ExperimentalMaterial3Api
 @Composable
-fun Navigation() {
+fun Navigation(
+    state: NavigationState,
+    onEvent: (NavigationEvent) -> Unit
+) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
 
@@ -73,6 +78,18 @@ fun Navigation() {
                                 CustomIconButton(icon = Icons.Filled.KeyboardArrowLeft) {
                                     navController.popBackStack()
                                 }
+                        },
+                        actions = {
+                            if (currentScreen == Routes.UserScreen.route) {
+                                CustomIconButton(icon = Icons.Default.ExitToApp) {
+                                    onEvent(NavigationEvent.Clear)
+                                    navController.navigate(Routes.AuthorizationScreen.route) {
+                                        popUpTo(Routes.UserScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
+                            }
                         }
                     )
             }

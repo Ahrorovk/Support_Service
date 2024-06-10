@@ -17,6 +17,7 @@ class DataStoreManager(val context: Context) {
         val THE_FIRST_LOCALE_LANGUAGE_KEY = intPreferencesKey("THE_FIRST_LOCALE_LANGUAGE_KEY")
         val LANGUAGE_SHORTCUT_KEY = stringPreferencesKey("LANGUAGE_SHORTCUT_KEY")
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
+        private val IS_ADDED_KEY = booleanPreferencesKey("is_added_key")
         private val ROLE_ID = intPreferencesKey("role_id")
     }
 
@@ -24,6 +25,12 @@ class DataStoreManager(val context: Context) {
     suspend fun updateAccessToken(token: String) {
         context.dataStore.edit { preference ->
             preference[ACCESS_TOKEN_KEY] = token
+        }
+    }
+
+    suspend fun updateIsAdded(isAdded: Boolean) {
+        context.dataStore.edit { preference ->
+            preference[IS_ADDED_KEY] = isAdded
         }
     }
 
@@ -54,6 +61,9 @@ class DataStoreManager(val context: Context) {
 
     val getAccessToken = context.dataStore.data.map {
         it[ACCESS_TOKEN_KEY] ?: ""
+    }
+    val getIsAdded = context.dataStore.data.map {
+        it[IS_ADDED_KEY] ?: false
     }
     val getRoleId = context.dataStore.data.map {
         it[ROLE_ID] ?: 0
