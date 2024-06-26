@@ -1,6 +1,6 @@
 package com.example.supportservice.main.domain.main.models.application
 
-data class UpdateApplicationResponseRemote(
+data class ApplicationResponseRemote(
     val statusCode: Int,
     val status: String
 )

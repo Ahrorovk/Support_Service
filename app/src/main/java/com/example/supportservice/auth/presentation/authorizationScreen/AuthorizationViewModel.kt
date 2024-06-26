@@ -33,6 +33,16 @@ class AuthorizationViewModel @Inject constructor(
         AuthorizationState()
     )
 
+    init {
+        dataStoreManager.getFcmTokenKey.onEach { value ->
+            Log.e("TAG","FCM_TOKEN->\n -> $value")
+            _state.update {
+                it.copy(
+                    fcmTokenState = value
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun onEvent(event: AuthorizationEvent) {
         when (event) {
@@ -63,7 +73,8 @@ class AuthorizationViewModel @Inject constructor(
             AuthorizationEvent.Authorization -> {
                 authorization(
                     _state.value.email,
-                    _state.value.password
+                    _state.value.password,
+                    _state.value.fcmTokenState
                 )
             }
 
@@ -71,11 +82,12 @@ class AuthorizationViewModel @Inject constructor(
         }
     }
 
-    fun authorization(email: String, password: String) {
+    fun authorization(email: String, password: String, fcmToken: String) {
         authorizationUseCase.invoke(
             LoginReceiveRemote(
                 email,
-                password
+                password,
+                fcmToken
             )
         ).onEach { result: Resource<LoginResponseRemote> ->
             when (result) {

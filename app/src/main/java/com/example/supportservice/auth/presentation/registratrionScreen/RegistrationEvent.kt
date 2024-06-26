@@ -17,6 +17,6 @@ sealed class RegistrationEvent {
 
     //    data class OnRegistrationRespStateChange(val state: RegistrationRespState): RegistrationEvent()
     object Registration : RegistrationEvent()
-    object GoToMainScreen : RegistrationEvent()
+    object GoToAuthScreen : RegistrationEvent()
     object GoToSignUp : RegistrationEvent()
 }

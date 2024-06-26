@@ -5,5 +5,6 @@ import com.example.supportservice.auth.domain.auth.states.LoginResponseState
 data class AuthorizationState(
     val email: String = "",
     val password: String = "",
-    val authorizationRespState: LoginResponseState = LoginResponseState()
+    val authorizationRespState: LoginResponseState = LoginResponseState(),
+    val fcmTokenState: String = ""
 )

@@ -3,10 +3,12 @@ package com.example.supportservice.main.domain
 import com.example.supportservice.main.domain.main.models.application.AddApplicationBody
 import com.example.supportservice.main.domain.main.models.application.AddApplicationResponse
 import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
-import com.example.supportservice.main.domain.main.models.application.GetApplicationByIdReceiveRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationByIdReceiveRemote
 import com.example.supportservice.main.domain.main.models.application.UpdateApplicationBody
-import com.example.supportservice.main.domain.main.models.application.UpdateApplicationResponseRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationResponseRemote
 import com.example.supportservice.main.domain.main.models.status.StatusResponseRemote
+import retrofit2.http.Body
+import retrofit2.http.Header
 
 interface MainRepository {
     suspend fun getApplicationsByEmail(
@@ -20,8 +22,14 @@ interface MainRepository {
 
     suspend fun getApplicationById(
         token: String,
-        idBody: GetApplicationByIdReceiveRemote
+        idBody: ApplicationByIdReceiveRemote
     ): ApplicationsResponseRemote
+
+
+    suspend fun deleteApplicationById(
+        token: String,
+        updateApplicationBody: ApplicationByIdReceiveRemote
+    ): ApplicationResponseRemote
 
     suspend fun addApplication(
         token: String,
@@ -31,7 +39,7 @@ interface MainRepository {
     suspend fun updateApplication(
         token: String,
         updateApplicationBody: UpdateApplicationBody
-    ): UpdateApplicationResponseRemote
+    ): ApplicationResponseRemote
 
     suspend fun getAllStatuses(): StatusResponseRemote
 }

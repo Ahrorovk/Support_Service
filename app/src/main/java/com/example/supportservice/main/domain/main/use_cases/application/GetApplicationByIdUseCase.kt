@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.supportservice.core.util.Resource
 import com.example.supportservice.main.domain.MainRepository
 import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
-import com.example.supportservice.main.domain.main.models.application.GetApplicationByIdReceiveRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationByIdReceiveRemote
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -16,7 +16,7 @@ class GetApplicationByIdUseCase @Inject constructor(
 ) {
     operator fun invoke(
         token: String,
-        applicationBody: GetApplicationByIdReceiveRemote
+        applicationBody: ApplicationByIdReceiveRemote
     ): Flow<Resource<ApplicationsResponseRemote>> = flow {
         try {
             Log.e("TAG","ISLOAAAAADIIIINGGG")

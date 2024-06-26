@@ -5,9 +5,9 @@ import com.example.supportservice.main.domain.MainRepository
 import com.example.supportservice.main.domain.main.models.application.AddApplicationBody
 import com.example.supportservice.main.domain.main.models.application.AddApplicationResponse
 import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
-import com.example.supportservice.main.domain.main.models.application.GetApplicationByIdReceiveRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationByIdReceiveRemote
 import com.example.supportservice.main.domain.main.models.application.UpdateApplicationBody
-import com.example.supportservice.main.domain.main.models.application.UpdateApplicationResponseRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationResponseRemote
 import com.example.supportservice.main.domain.main.models.status.StatusResponseRemote
 
 class MainRepositoryImpl(
@@ -18,9 +18,14 @@ class MainRepositoryImpl(
 
     override suspend fun getApplicationById(
         token: String,
-        idBody: GetApplicationByIdReceiveRemote
+        idBody: ApplicationByIdReceiveRemote
     ): ApplicationsResponseRemote =
         api.getApplicationById(token, idBody)
+
+    override suspend fun deleteApplicationById(
+        token: String,
+        deleteApplicationBody: ApplicationByIdReceiveRemote
+    ): ApplicationResponseRemote = api.deleteApplicationById(token, deleteApplicationBody)
 
     override suspend fun getAllApplications(token: String): ApplicationsResponseRemote =
         api.getAllApplications(token)
@@ -34,7 +39,7 @@ class MainRepositoryImpl(
     override suspend fun updateApplication(
         token: String,
         updateApplicationBody: UpdateApplicationBody
-    ): UpdateApplicationResponseRemote = api.updateApplication(token, updateApplicationBody)
+    ): ApplicationResponseRemote = api.updateApplication(token, updateApplicationBody)
 
     override suspend fun getAllStatuses(): StatusResponseRemote = api.getAllStatuses()
 }

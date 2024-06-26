@@ -1,7 +1,11 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.supportservice.main.presentation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +28,20 @@ import com.example.supportservice.main.domain.main.models.application.Applicatio
 @Composable
 fun ApplicationItem(
     application: Application,
+    onDeleteApplication: (Int) -> Unit,
     onClick: (Application) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(application) }
+            .combinedClickable(
+                onClick = {
+                    onClick(application)
+                },
+                onLongClick = {
+                    onDeleteApplication(application.id)
+                }
+            )
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.primary)
@@ -50,7 +62,7 @@ fun ApplicationItem(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                StatusItem(title = application.status, isSelected = false) {
+                StatusItem(title = application.status ?: "", isSelected = false) {
                 }
             }
             Spacer(modifier = Modifier.padding(5.dp))

@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supportservice.core.data.local.DataStoreManager
 import com.example.supportservice.core.util.Resource
+import com.example.supportservice.main.domain.main.models.application.ApplicationByIdReceiveRemote
 import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
 import com.example.supportservice.main.domain.main.models.application.UpdateApplicationBody
 import com.example.supportservice.main.domain.main.models.status.StatusResponseRemote
 import com.example.supportservice.main.domain.main.states.application.GetApplicationsResponseState
 import com.example.supportservice.main.domain.main.states.application.UpdateApplicationResponseState
 import com.example.supportservice.main.domain.main.states.status.GetAllStatusesResponseState
+import com.example.supportservice.main.domain.main.use_cases.application.DeleteApplicationByIdUseCase
 import com.example.supportservice.main.domain.main.use_cases.application.GetAllApplicationsUseCase
 import com.example.supportservice.main.domain.main.use_cases.application.GetApplicationsByEmailUseCase
 import com.example.supportservice.main.domain.main.use_cases.application.UpdateApplicationUseCase
@@ -37,7 +39,8 @@ class MainViewModel @Inject constructor(
     private val getAllApplications: GetAllApplicationsUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val getAllStatusesUseCase: GetAllStatusesUseCase,
-    private val updateApplicationUseCase: UpdateApplicationUseCase
+    private val updateApplicationUseCase: UpdateApplicationUseCase,
+    private val deleteApplicationByIdUseCase: DeleteApplicationByIdUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.stateIn(
@@ -142,6 +145,26 @@ class MainViewModel @Inject constructor(
                 }
             }
 
+            is MainEvent.DeleteApplicationById -> {
+                deleteApplicationById(event.id)
+            }
+
+            is MainEvent.OnDeleteApplicationByIdStateChange -> {
+                _state.update {
+                    it.copy(
+                        deleteByIdApplicationState = event.id
+                    )
+                }
+            }
+
+            is MainEvent.OnDeleteApplicationDialogState -> {
+                _state.update {
+                    it.copy(
+                        deleteApplicationDialogState = event.state
+                    )
+                }
+            }
+
             MainEvent.GetAllApplications -> {
                 getAllApplications()
             }
@@ -177,6 +200,44 @@ class MainViewModel @Inject constructor(
                 is Resource.Success -> {
                     _state.update {
                         it.copy(updateResponseState = UpdateApplicationResponseState(response = result.data))
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun deleteApplicationById(id: Int) {
+        deleteApplicationByIdUseCase.invoke(
+            _state.value.accessToken,
+            ApplicationByIdReceiveRemote(id)
+        ).onEach { result ->
+            when (result) {
+                is Resource.Error -> {
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                error = result.message.toString()
+                            )
+                        )
+                    )
+                }
+
+                is Resource.Loading -> {
+                    onEvent(
+                        MainEvent.OnGetApplicationsResponseStateChange(
+                            GetApplicationsResponseState(
+                                isLoading = true
+                            )
+                        )
+                    )
+                }
+
+                is Resource.Success -> {
+                    if (_state.value.selectedRoleId == 1) {
+                        getApplicationsByEmail()
+                    }
+                    if (_state.value.selectedRoleId == 2) {
+                        getAllApplications()
                     }
                 }
             }

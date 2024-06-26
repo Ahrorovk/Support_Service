@@ -87,6 +87,9 @@ fun DetailScreen(
                             ) {
                                 onEvent(DetailEvent.UpdateApplication)
                             }
+                        } else {
+                            Spacer(modifier = Modifier.padding(10.dp))
+                            Text("Комментарии: " + response.comment)
                         }
                     }
                 }

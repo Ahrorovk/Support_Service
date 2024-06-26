@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94931233068",
+    "project_id": "support-service-dbfd3",
+    "storage_bucket": "support-service-dbfd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94931233068:android:240887bc2c8c435f0de489",
+        "android_client_info": {
+          "package_name": "com.example.supportservice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAZyKWGmIZexyrVlKiDgmAh1X11kdhaJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

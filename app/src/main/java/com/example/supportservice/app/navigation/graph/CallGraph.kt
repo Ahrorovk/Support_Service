@@ -165,8 +165,8 @@ fun NavGraphBuilder.CallNavGraph(
                             }
                         }
 
-                        RegistrationEvent.GoToMainScreen -> {
-                            navController.navigate(Routes.MainScreen.route) {
+                        RegistrationEvent.GoToAuthScreen -> {
+                            navController.navigate(Routes.AuthorizationScreen.route) {
                                 popUpTo(Routes.RegistrationScreen.route) {
                                     inclusive = true
                                 }

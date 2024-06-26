@@ -93,6 +93,7 @@ class DetailViewModel @Inject constructor(
             DetailEvent.UpdateApplication -> {
                 updateApplication()
             }
+
             else -> {}
         }
     }
@@ -167,8 +168,8 @@ class DetailViewModel @Inject constructor(
                                         applicationsResponseState = GetApplicationsResponseState(
                                             response = resp
                                         ),
-                                        selectedStatus = resp.applications[0].status,
-                                        comment = resp.applications[0].comment
+                                        selectedStatus = resp.applications[0].status ?: "",
+                                        comment = resp.applications[0].comment ?: ""
                                     )
                                 }
                             }

@@ -3,9 +3,9 @@ package com.example.supportservice.main.data.network.remote
 import com.example.supportservice.main.domain.main.models.application.AddApplicationBody
 import com.example.supportservice.main.domain.main.models.application.AddApplicationResponse
 import com.example.supportservice.main.domain.main.models.application.ApplicationsResponseRemote
-import com.example.supportservice.main.domain.main.models.application.GetApplicationByIdReceiveRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationByIdReceiveRemote
 import com.example.supportservice.main.domain.main.models.application.UpdateApplicationBody
-import com.example.supportservice.main.domain.main.models.application.UpdateApplicationResponseRemote
+import com.example.supportservice.main.domain.main.models.application.ApplicationResponseRemote
 import com.example.supportservice.main.domain.main.models.status.StatusResponseRemote
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,7 +28,7 @@ interface MainApi {
     suspend fun getApplicationById(
         @Header("Bearer-Authorization") token: String,
         @Body
-        applicationBody: GetApplicationByIdReceiveRemote
+        applicationBody: ApplicationByIdReceiveRemote
     ): ApplicationsResponseRemote
 
     @POST("application/add")
@@ -43,7 +43,13 @@ interface MainApi {
         @Header("Bearer-Authorization") token: String,
         @Body
         updateApplicationBody: UpdateApplicationBody
-    ): UpdateApplicationResponseRemote
+    ): ApplicationResponseRemote
+    @POST("application/delete-byId")
+    suspend fun deleteApplicationById(
+        @Header("Bearer-Authorization") token: String,
+        @Body
+        deleteApplicationBody: ApplicationByIdReceiveRemote
+    ): ApplicationResponseRemote
 
     @GET("status/get")
     suspend fun getAllStatuses(): StatusResponseRemote

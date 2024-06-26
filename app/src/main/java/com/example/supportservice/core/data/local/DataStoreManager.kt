@@ -19,8 +19,15 @@ class DataStoreManager(val context: Context) {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
         private val IS_ADDED_KEY = booleanPreferencesKey("is_added_key")
         private val ROLE_ID = intPreferencesKey("role_id")
+        private val FCM_TOKEN_KEY = stringPreferencesKey("fcm_token_key")
     }
 
+
+    suspend fun updateFcmTokenKey(token: String) {
+        context.dataStore.edit { preference ->
+            preference[FCM_TOKEN_KEY] = token
+        }
+    }
 
     suspend fun updateAccessToken(token: String) {
         context.dataStore.edit { preference ->
@@ -59,6 +66,9 @@ class DataStoreManager(val context: Context) {
     }
 
 
+    val getFcmTokenKey = context.dataStore.data.map {
+        it[FCM_TOKEN_KEY] ?: ""
+    }
     val getAccessToken = context.dataStore.data.map {
         it[ACCESS_TOKEN_KEY] ?: ""
     }

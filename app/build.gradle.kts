@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.org.jetbrains.kotlin.kapt)
 }
 
@@ -58,7 +59,12 @@ configurations {
     }
 }
 dependencies {
-//hilt
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging.ktx)
+//    implementation("com.google.firebase:firebase-analytics/")
+    //hilt
     implementation(libs.com.google.dagger.hilt.android)
     kapt(libs.com.google.dagger.hilt.android.compiler)
     kapt(libs.com.google.dagger.hilt.compiler)
